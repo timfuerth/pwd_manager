@@ -1,6 +1,6 @@
 from pwd_manager.interface import window_base as wb
 from pwd_manager.interface import passwords as show_pw
-from pwd_manager.interface import password as pw
+from pwd_manager.utils import password as pw
 import tkinter as tk
 from tkinter import ttk
 

@@ -1,5 +1,5 @@
 from pwd_manager.interface import window_base as wb
-from pwd_manager.interface import password as pwd
+from pwd_manager.utils import password as pwd
 from pwd_manager.interface import new_password
 import tkinter as tk
 

@@ -1,6 +1,6 @@
 from tkinter import ttk
 from pwd_manager.interface import window_base as wb
-from pwd_manager.interface import password
+from pwd_manager.utils import password
 
 
 class New_password_window(wb.Window):
