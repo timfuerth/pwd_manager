@@ -23,6 +23,8 @@ class Login_window(wb.Window):
             tk.Label(self.window, text=self.password.get()).pack()
             return
 
+        self.window.withdraw()
+
         pw_window = show_pw.Passwords_window([
             pw.Password("firefox", "123", ""),
             pw.Password("steam", "abc", "very good comment")
