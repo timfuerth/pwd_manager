@@ -7,7 +7,7 @@ import tkinter as tk
 class Row:
     def __init__(self, window, row_index, pw: pwd.Password):
         self.row_index = row_index
-        self.hidden = False
+        self.hidden = True
         self.name = tk.Label(window, width=15, text=pw.username)
         self.password = tk.Label(window, width=15, text=pw.password)
         self.show_password_button = tk.Button(window, width=15, text="show", command=self.show_hide_password)
@@ -17,6 +17,7 @@ class Row:
         self.password.grid(column=1, row=row_index)
         self.show_password_button.grid(column=2, row=row_index)
         self.comment.grid(column=3, row=row_index)
+        self.show_hide_password()
 
     def show_hide_password(self):
         if self.hidden:
