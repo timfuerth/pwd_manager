@@ -1,5 +1,6 @@
 from pwd_manager.interface import window_base as wb
-from pwd_manager.interface import passwords as pw
+from pwd_manager.interface import passwords as show_pw
+from pwd_manager.interface import password as pw
 import tkinter as tk
 from tkinter import ttk
 
@@ -22,11 +23,9 @@ class Login_window(wb.Window):
             tk.Label(self.window, text=self.password.get()).pack()
             return
 
-        pw_window = pw.Passwords_window({
-            "pass1": "abc",
-            "pass2": "cde",
-            "pass3": "fgh"
-        })
+        pw_window = show_pw.Passwords_window([
+            pw.Password("firefox", "123", ""),
+            pw.Password("steam", "abc", "very good comment")
+        ])
 
-        pw_window.show_passwords()
         pw_window.start()
