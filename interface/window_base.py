@@ -9,6 +9,7 @@ class Window:
 
     def start(self):
         self.set_size(600, 500)
+        self.window.attributes('-alpha', 0.9)
         self.window.mainloop()
 
     def set_size(self, width, height):
