@@ -20,7 +20,7 @@ class Login_window(wb.Window):
 
     def login(self):
         if self.password.get() != "123":
-            tk.Label(self.window, text=self.password.get()).pack()
+            ttk.Label(self.window, text=self.password.get()).pack()
             return
 
         self.window.withdraw()
