@@ -3,8 +3,9 @@ from tkinter import ttk
 
 
 class Window:
-    def __init__(self):
+    def __init__(self, title="Password-manager"):
         self.window = tk.Tk()
+        self.window.title(title)
 
     def start(self):
         self.set_size(600, 500)
