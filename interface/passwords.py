@@ -3,6 +3,7 @@ from pwd_manager.interface import password as pwd
 from pwd_manager.interface import new_password
 import tkinter as tk
 
+
 class Row:
     def __init__(self, window, row_index, pw: pwd.Password):
         self.row_index = row_index
@@ -17,13 +18,17 @@ class Row:
         self.show_password_button.grid(column=2, row=row_index)
         self.comment.grid(column=3, row=row_index)
 
-
     def show_hide_password(self):
         if self.hidden:
             self.password.grid_remove()
         else:
             self.password.grid()
         self.hidden = not self.hidden
+
+
+def create_new_password():
+    password_window = new_password.New_password_window()
+    password_window.start()
 
 
 class Passwords_window(wb.Window):
@@ -38,13 +43,7 @@ class Passwords_window(wb.Window):
             Row(self.window, row_index, pw)
             row_index += 1
 
-    def create_new_password(self):
-        password_window = new_password.New_password_window()
-        password_window.start()
-
     def start(self):
         self.show_passwords()
-        tk.Button(self.window, text="new password", command=self.create_new_password).grid()
+        tk.Button(self.window, text="new password", command=create_new_password).grid()
         super().start()
-
-    ### TODO: only show passwords as plaintext when button is pressed
