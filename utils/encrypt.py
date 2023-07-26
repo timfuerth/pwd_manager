@@ -19,7 +19,7 @@ def secure_file_name(file_name):
             file_name = file_name.replace(i, "")
         return file_name
     except Exception as e:
-        raise Exception("Error occurred while encrypting file: {e}")
+        raise Exception(f"Error occurred while encrypting file: {e}")
 
 
 def derive_key_from_password(password: str, salt):
