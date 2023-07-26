@@ -1,6 +1,7 @@
 from pwd_manager.interface import window_base as wb
 from pwd_manager.interface import password as pw
 from pwd_manager.interface import new_password
+# from pwd_manager.utils.encrypt import encrypt
 import tkinter as tk
 
 
@@ -33,11 +34,19 @@ def create_new_password():
     password_window.start()
 
 
+
+
 class Passwords_window(wb.Window):
 
-    def __init__(self, passwords: list[pw.Password]):
+    def __init__(self, passwords: list[pw.Password], key):
         super().__init__(title="Your Passwords")
         self.passwords = passwords
+        self.key = key
+
+    def logout(self):
+        # encrypt(self.key)
+        self.window.destroy()
+        exit(0)
 
     def show_passwords(self):
         row_index = 0
@@ -48,4 +57,5 @@ class Passwords_window(wb.Window):
     def start(self):
         self.show_passwords()
         tk.Button(self.window, text="new password", command=create_new_password).grid()
+        tk.Button(self.window, text="logout", command=self.logout).grid()
         super().start()
