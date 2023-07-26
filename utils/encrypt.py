@@ -11,6 +11,17 @@ import shutil
 zip_pwd = "DCÖÜ,8ÖV[]Bzpa9FP_>}f+wrD(%}$d0QgeG]}T8g!:$g]:m?xrWdPHUiu9&öRpIM"
 
 
+def secure_file_name(file_name):
+    try:
+        special_characters = ['/', '$', '*', '&', '<', '>']
+        for i in special_characters:
+            # Replace the special character with an empty string
+            file_name = file_name.replace(i, "")
+        return file_name
+    except Exception as e:
+        raise Exception("Error occurred while encrypting file: {e}")
+
+
 def derive_key_from_password(password: str, salt):
     password = bytes(password, "UTF-8")
     # Generate a key from the password and salt using PBKDF2
@@ -26,18 +37,13 @@ def derive_key_from_password(password: str, salt):
     return key
 
 
-def list_files_in_directory(directory_path):
-    file_list = []
-    for file in os.listdir(directory_path):
-        file_list.append(file)
-    return file_list
-
-
 def encrypt_one_file(password: str, file_name: str):
     try:
+        # Removing special chars to prevent '../'
+        file_name = secure_file_name(file_name)
+
         with open("data/" + file_name, 'rb') as open_file:
             plaintext_message = open_file.read()
-        print("CHECK: " + str(plaintext_message[-12:]))
         if plaintext_message[-12:] == b":::ENCRYPTED":
             return "File is already encrypted!"
         # Generate a Fernet key
@@ -80,6 +86,7 @@ def unzip_files():
 
     # Extract the files from the password-protected ZIP archive
     pyminizip.uncompress(output_zip_file, data_directory, password, 0)
+
 
 # Call the function to perform the extraction
 
@@ -165,4 +172,3 @@ def decrypt_file(password: str, file_name: str):
 
     # Remove the temporary 'encrypted_data.csv'
     os.remove("encrypted_data.csv")'''
-
