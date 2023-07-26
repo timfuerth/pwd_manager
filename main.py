@@ -1,40 +1,38 @@
-from utils.encrypt import decrypt_data
-from utils.encrypt import encrypt_data_and_save
-from utils.encrypt import append_encrypted
+import utils.encrypt as encrypt
 
 
-def unlock_pwd():
-    password = bytes(input("pwd: "), "UTF-8")
-    # msg = bytes(input("msg: "), "UTF-8")
-
-    decrypted_message = decrypt_data(password)
-    print("Decrypted message:", decrypted_message)
+def encrypt_file():
+    pwd = input("pwd: ")
+    file_name = input("file_name: ")
+    print(encrypt.encrypt_one_file(pwd, file_name))
 
 
-def encrypt_pwd():
-    password = bytes(input("pwd: "), "UTF-8")
-    # msg = bytes(input("msg: "), "UTF-8")
-
-    encrypt_data_and_save(password)
-    print("Encrypted")
+def decrypt_file():
+    pwd = input("pwd: ")
+    file_name = input("file_name: ")
+    print(encrypt.decrypt_file(pwd, file_name))
 
 
-def encrypt_one():
-    password = bytes(input("pwd: "), "UTF-8")
-    msg = bytes(input("msg: "), "UTF-8")
+def log_out():
+    encrypt.zip_files()
+    print("Zipped!")
 
-    append_encrypted(password, msg)
-    print("Encrypted")
+
+def log_in():
+    encrypt.unzip_files()
+    print("unzipped")
 
 
 def start():
     match input("e/d: "):
         case "e":
-            encrypt_pwd()
+            encrypt_file()
         case "d":
-            unlock_pwd()
-        case "o":
-            encrypt_one()
+            decrypt_file()
+        case "z":
+            log_out()
+        case "u":
+            log_in()
     start()
 
 
