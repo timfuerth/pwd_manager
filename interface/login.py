@@ -1,16 +1,23 @@
 import csv
+import io
+import os
 
 from pwd_manager.interface import window_base as wb
 from pwd_manager.interface import passwords as show_pw
 from pwd_manager.interface import password as pw
+from pwd_manager.utils import encrypt
 import tkinter as tk
 from tkinter import ttk
 
 
 def str_to_password(password_string: str):
-    for row in csv.reader(csvfile=password_string, delimiter=";"):
+    print(password_string)
+    passw = io.StringIO(password_string)
+    print(passw)
+    reader = csv.reader(password_string.split('\n'), delimiter=";")
+    for row in reader:
         username, password, comment = row
-        password = pw.Password(username, password, comment)
+        return [pw.Password(username, password, comment)]
 
 
 class Login_window(wb.Window):
@@ -33,6 +40,12 @@ class Login_window(wb.Window):
 
         self.window.withdraw()
 
-        pw_window = show_pw.Passwords_window(str_to_password(), self.key)
+        encrypt.unzip_files()
+
+        for file in os.listdir("data"):
+            encrypt.decrypt_file(file_name=file, password=self.key.get())
+
+
+        pw_window = show_pw.Passwords_window(str_to_password("firefox;test;test"), self.key)
 
         pw_window.start()
