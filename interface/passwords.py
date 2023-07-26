@@ -6,24 +6,25 @@ import tkinter as tk
 
 class Row:
     def __init__(self, window, row_index, passw: pw.Password):
+        self.password = passw
         self.row_index = row_index
         self.hidden = True
-        self.name = tk.Label(window, width=15, text=passw.username)
-        self.password = tk.Label(window, width=15, text=passw.password)
+        self.name_label = tk.Label(window, width=15, text=passw.username)
+        self.password_label = tk.Label(window, width=15, text=passw.password)
         self.show_password_button = tk.Button(window, width=15, text="show", command=self.show_hide_password)
-        self.comment = tk.Label(window, width=15, text=passw.comment)
+        self.comment_label = tk.Label(window, width=15, text=passw.comment)
 
-        self.name.grid(column=0, row=row_index)
-        self.password.grid(column=1, row=row_index)
+        self.name_label.grid(column=0, row=row_index)
+        self.password_label.grid(column=1, row=row_index)
         self.show_password_button.grid(column=2, row=row_index)
-        self.comment.grid(column=3, row=row_index)
+        self.comment_label.grid(column=3, row=row_index)
         self.show_hide_password()
 
     def show_hide_password(self):
         if self.hidden:
-            self.password.grid_remove()
+            self.password_label.config(text="******")
         else:
-            self.password.grid()
+            self.password_label.config(text=self.password.password)
         self.hidden = not self.hidden
 
 
