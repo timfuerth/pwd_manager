@@ -18,7 +18,7 @@ def derive_key_from_password(password: str, salt):
         algorithm=hashes.SHA256(),
         length=32,
         salt=salt,
-        iterations=100000,  # Use the same number of iterations as in encryption
+        iterations=600000,  # Use the same number of iterations as in encryption
         backend=default_backend()
     )
     key = base64.urlsafe_b64encode(kdf.derive(password))
@@ -34,27 +34,32 @@ def list_files_in_directory(directory_path):
 
 
 def encrypt_one_file(password: str, file_name: str):
-    with open("data/" + file_name, 'rb') as open_file:
-        plaintext_message = open_file.read()
-    print("CHECK: " + str(plaintext_message[-12:]))
-    if plaintext_message[-12:] == b":::ENCRYPTED":
-        return "File is already encrypted!"
-    # Generate a Fernet key
-    salt = os.urandom(16)
-    key = derive_key_from_password(password, salt)
+    try:
+        with open("data/" + file_name, 'rb') as open_file:
+            plaintext_message = open_file.read()
+        print("CHECK: " + str(plaintext_message[-12:]))
+        if plaintext_message[-12:] == b":::ENCRYPTED":
+            return "File is already encrypted!"
+        # Generate a Fernet key
+        salt = os.urandom(16)
+        key = derive_key_from_password(password, salt)
 
-    # Initialize the Fernet cipher with the generated key
-    cipher_suite = Fernet(key)
+        # Initialize the Fernet cipher with the generated key
+        cipher_suite = Fernet(key)
 
-    # Encrypt the message
-    print(plaintext_message)
-    encrypted_message = cipher_suite.encrypt(plaintext_message)
-    print(encrypted_message)
-    with open("data/" + file_name, 'wb') as file:  # SAVE SALT / ENCRYPTED DATA
-        file.write(base64.urlsafe_b64encode(salt))
-        file.write(encrypted_message)
-        file.write(b":::ENCRYPTED")
-    return "ENCRYPTED!"
+        # Encrypt the message
+        print(plaintext_message)
+        encrypted_message = cipher_suite.encrypt(plaintext_message)
+        print(encrypted_message)
+        with open("data/" + file_name, 'wb') as file:  # SAVE SALT / ENCRYPTED DATA
+            file.write(base64.urlsafe_b64encode(salt))
+            file.write(encrypted_message)
+            file.write(b":::ENCRYPTED")
+        return "ENCRYPTED!"
+    except FileNotFoundError:
+        return "File not found. Please check the file path."
+    except Exception as e:
+        return f"Error occurred while encrypting file: {e}"
 
 
 def zip_files():
@@ -105,30 +110,33 @@ def unzip_files():
 
 
 def decrypt_file(password: str, file_name: str):
-    # pyminizip.uncompress("data.zip", zip_pwd, None, 0)
-    # os.remove("data.zip")
+    # TODO vulnerability patch: path injections ("../")
     # Read the encrypted data and key from the file
-    with open("data/" + file_name, 'rb') as file:
-        encrypted_data_with_key = file.read()
-
-    # Separate key from encrypted data
-    salt = base64.urlsafe_b64decode(encrypted_data_with_key[:24])
-    key = derive_key_from_password(password, salt)
-
-    encrypted_data = encrypted_data_with_key[24:]
-
-    # Initialize the Fernet cipher with the key
-    cipher_suite = Fernet(key)
-
     try:
+        with open("data/" + file_name, 'rb') as file:
+            encrypted_data_with_key = file.read()
+
+        # Separate key from encrypted data
+        salt = base64.urlsafe_b64decode(encrypted_data_with_key[:24])
+        key = derive_key_from_password(password, salt)
+
+        encrypted_data = encrypted_data_with_key[24:]
+
+        # Initialize the Fernet cipher with the key
+        cipher_suite = Fernet(key)
+
         # Decrypt the data
         decrypted_data = cipher_suite.decrypt(encrypted_data)
         with open("data/" + file_name, 'wb') as dec_file:
             dec_file.write(decrypted_data)
         return decrypted_data
-    except (cryptography.fernet.InvalidToken, TypeError):
-        return print("Wrong Password!")
 
+    except FileNotFoundError:
+        return "File not found. Please check the file path."
+    except cryptography.fernet.InvalidToken:
+        return "Decryption failed. The provided password is incorrect."
+    except Exception as e:
+        return f"Error occurred while decrypting file: {e}"
 
 
 '''def append_encrypted(password: bytes, plaintext_message: bytes):
