@@ -1,5 +1,6 @@
 from utils.encrypt import decrypt_data
 from utils.encrypt import encrypt_data_and_save
+from utils.encrypt import append_encrypted
 
 
 def unlock_pwd():
@@ -12,10 +13,19 @@ def unlock_pwd():
 
 def encrypt_pwd():
     password = bytes(input("pwd: "), "UTF-8")
-    msg = bytes(input("msg: "), "UTF-8")
+    # msg = bytes(input("msg: "), "UTF-8")
 
     encrypt_data_and_save(password)
     print("Encrypted")
+
+
+def encrypt_one():
+    password = bytes(input("pwd: "), "UTF-8")
+    msg = bytes(input("msg: "), "UTF-8")
+
+    append_encrypted(password, msg)
+    print("Encrypted")
+
 
 def start():
     match input("e/d: "):
@@ -23,6 +33,8 @@ def start():
             encrypt_pwd()
         case "d":
             unlock_pwd()
+        case "o":
+            encrypt_one()
     start()
 
 

@@ -6,6 +6,9 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import pyminizip
 
+zip_pwd = "DCÖÜ,8ÖV[]Bzpa9FP_>}f+wrD(%}$d0QgeG]}T8g!:$g]:m?xrWdPHUiu9&öRpIM"
+
+
 def derive_key_from_password(password, salt):
     # Generate a key from the password and salt using PBKDF2
     kdf = PBKDF2HMAC(
@@ -20,7 +23,16 @@ def derive_key_from_password(password, salt):
     return key
 
 
+def list_files_in_directory(directory_path):
+    file_list = []
+    for root, dirs, files in os.listdir(directory_path):
+        for file_name in files:
+            file_list.append(os.path.join(root, file_name))
+    return file_list
+
+
 def encrypt_data_and_save(password):
+
     with open('encrypted_data.csv', 'rb') as file:
         plaintext_message = file.read()
     # Generate a Fernet key
@@ -40,11 +52,12 @@ def encrypt_data_and_save(password):
         # file.write(b'|')
         file.write(encrypted_message)
 
-    pyminizip.compress('encrypted_data.csv', None, "data.zip", password, 0)
+    pyminizip.compress('encrypted_data.csv', None, "data.zip", zip_pwd, 0)
     os.remove("encrypted_data.csv")
 
+
 def decrypt_data(password):
-    pyminizip.uncompress("data.zip", password, None, 0)
+    pyminizip.uncompress("data.zip", zip_pwd, None, 0)
     os.remove("data.zip")
     # Read the encrypted data and key from the file
     with open('encrypted_data.csv', 'rb') as file:
@@ -64,3 +77,34 @@ def decrypt_data(password):
     with open('encrypted_data.csv', 'wb') as dec_file:
         dec_file.write(decrypted_data)
     return decrypted_data
+
+
+def append_encrypted(password: bytes, plaintext_message: bytes):
+    #test = list_files_in_directory("data")
+    #print(test[0])
+    pyminizip.uncompress("data.zip", zip_pwd, None, 0)
+    os.remove("data.zip")
+    # Read the existing salt from the file
+    with open('encrypted_data.csv', 'rb') as file:
+        encrypted_data_with_key = file.read()
+        salt = base64.urlsafe_b64decode(encrypted_data_with_key[:24])
+
+    # Derive the key from the password and the existing salt
+    key = derive_key_from_password(password, salt)
+
+    # Initialize the Fernet cipher with the generated key
+    cipher_suite = Fernet(key)
+
+    # Encrypt the new message
+    encrypted_message = cipher_suite.encrypt(plaintext_message)
+
+    # Append the encrypted message to the file
+    with open('encrypted_data.csv', 'ab') as encrypted_file:
+        encrypted_file.write(encrypted_message)
+
+    # Recompress the updated 'encrypted_data.csv' to 'data.zip'
+    pyminizip.compress('encrypted_data.csv', None, "data.zip", zip_pwd, 0)
+
+    # Remove the temporary 'encrypted_data.csv'
+    os.remove("encrypted_data.csv")
+
