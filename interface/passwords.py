@@ -34,8 +34,6 @@ def create_new_password():
     password_window.start()
 
 
-
-
 class Passwords_window(wb.Window):
 
     def __init__(self, passwords: list[pw.Password], key):
